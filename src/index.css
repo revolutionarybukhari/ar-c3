@@ -1,7 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0a0e1a;
+  --color-background: #060a12;
   --color-foreground: #e2e8f0;
   --color-card: #111827;
   --color-card-foreground: #e2e8f0;
@@ -17,7 +18,7 @@
   --color-warning: #f59e0b;
   --color-ring: #3b82f6;
   --radius: 0.5rem;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "JetBrains Mono", "Fira Code", "SF Mono", "Cascadia Code", ui-monospace, monospace;
 }
 
 * {
@@ -34,19 +35,56 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-background);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 3px;
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(30, 41, 59, 0.8);
+}
+
+/* Glow pulse for critical markers */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 4px currentColor; }
+  50% { box-shadow: 0 0 16px currentColor, 0 0 30px currentColor; }
+}
+.animate-glow { animation: glow-pulse 2s ease-in-out infinite; }
+
+/* LIVE badge pulse */
+@keyframes live-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.live-dot { animation: live-dot 1.5s ease-in-out infinite; }
+
+/* Subtle scan line effect for command center feel */
+.scanline::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255,255,255,0.01) 2px,
+    rgba(255,255,255,0.01) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
 }
 
 .leaflet-container {
-  background: #0a0e1a !important;
+  background: #060a12 !important;
+}
+
+.leaflet-tile {
+  filter: brightness(0.6) saturate(0.3) !important;
 }
 
 /* Smooth scrolling */

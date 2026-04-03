@@ -9,9 +9,9 @@ const Forecasting = lazy(() => import("@/pages/Forecasting"));
 
 function LoadingFallback() {
   return (
-    <div className="flex items-center justify-center h-[60vh]">
-      <div className="text-muted-foreground text-lg animate-pulse">
-        Loading...
+    <div className="flex items-center justify-center flex-1">
+      <div className="text-slate-600 text-xs font-mono tracking-wider animate-pulse uppercase">
+        Initializing...
       </div>
     </div>
   );
@@ -30,21 +30,23 @@ function App() {
         activeRegion={activeRegion}
         onRegionChange={setActiveRegion}
       />
-      <Suspense fallback={<LoadingFallback />}>
-        {activeView === "command-center" && (
-          <CommandCenter
-            activeRegion={activeRegion}
-            selectedFarm={selectedFarm}
-            onSelectFarm={setSelectedFarm}
-          />
-        )}
-        {activeView === "meating-point" && (
-          <MeatingPoint activeRegion={activeRegion} />
-        )}
-        {activeView === "forecasting" && (
-          <Forecasting activeRegion={activeRegion} />
-        )}
-      </Suspense>
+      <div className="flex-1 overflow-hidden">
+        <Suspense fallback={<LoadingFallback />}>
+          {activeView === "command-center" && (
+            <CommandCenter
+              activeRegion={activeRegion}
+              selectedFarm={selectedFarm}
+              onSelectFarm={setSelectedFarm}
+            />
+          )}
+          {activeView === "meating-point" && (
+            <MeatingPoint activeRegion={activeRegion} />
+          )}
+          {activeView === "forecasting" && (
+            <Forecasting activeRegion={activeRegion} />
+          )}
+        </Suspense>
+      </div>
     </Layout>
   );
 }
