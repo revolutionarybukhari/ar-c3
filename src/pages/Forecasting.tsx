@@ -4,6 +4,8 @@ import AIScenarioPanel from "@/components/dashboard/AIScenarioPanel";
 import MacroStressIndex from "@/components/dashboard/MacroStressIndex";
 import LivestockMarketTicker from "@/components/dashboard/LivestockMarketTicker";
 import SupplyChainMonitor from "@/components/dashboard/SupplyChainMonitor";
+import AISupplyBalancer from "@/components/dashboard/AISupplyBalancer";
+import AIRiskPredictor from "@/components/dashboard/AIRiskPredictor";
 
 interface Props {
   activeRegion: string;
@@ -35,6 +37,12 @@ export default function Forecasting({ activeRegion: _activeRegion }: Props) {
         </div>
         <div className={`xl:col-span-2 ${PC}`}>
           <SupplyChainMonitor />
+        </div>
+        <div className={`xl:col-span-2 ${PC} border-purple-500/20`}>
+          <AISupplyBalancer />
+        </div>
+        <div className={`xl:col-span-2 ${PC} border-purple-500/20`}>
+          <AIRiskPredictor />
         </div>
       </div>
     </div>

@@ -31,6 +31,8 @@ import BreedingLifecycleTracker from "@/components/dashboard/BreedingLifecycleTr
 import CompetitorIntel from "@/components/dashboard/CompetitorIntel";
 import FeedWaterInventory from "@/components/dashboard/FeedWaterInventory";
 import ESGTracker from "@/components/dashboard/ESGTracker";
+import AISupplyBalancer from "@/components/dashboard/AISupplyBalancer";
+import AIRiskPredictor from "@/components/dashboard/AIRiskPredictor";
 
 const DualRegionMap = lazy(() => import("@/components/map/DualRegionMap"));
 
@@ -108,52 +110,58 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
       {/* Panel grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
 
-        {/* Row 1: Live media + KPIs + Market Ticker + Macro Stress */}
+        {/* Row 1: AI Command Row — Supply Balancer + Risk Predictor (wide, prominent) */}
+        <div className={`xl:col-span-2 ${PC} border-purple-500/20`}><AISupplyBalancer /></div>
+        <div className={`xl:col-span-2 ${PC} border-purple-500/20`}><AIRiskPredictor /></div>
+
+        {/* Row 2: AI Insights (wide) + AI Scenarios (wide) */}
+        <div className={`xl:col-span-2 ${PC} border-purple-500/10`}><AIInsightsPanel /></div>
+        <div className={`xl:col-span-2 ${PC} p-4 border-purple-500/10`}><AIScenarioPanel /></div>
+
+        {/* Row 3: Live media + KPIs + Market Ticker + Macro Stress */}
         <div className={PC}><LiveMediaPanel /></div>
         <div className={PC}><LiveKpiStrip /></div>
         <div className={PC}><LivestockMarketTicker /></div>
         <div className={PC}><MacroStressIndex /></div>
 
-        {/* Row 2: Supply Chain + Disease + Weather + Alerts */}
+        {/* Row 4: Supply Chain + Disease + Weather + Alerts */}
         <div className={PC}><SupplyChainMonitor /></div>
         <div className={PC}><DiseaseOutbreakMonitor /></div>
         <div className={PC}><WeatherImpactPanel /></div>
         <div className={PC}><AlertsFeed /></div>
 
-        {/* Row 3: AI Insights + News + Shipment Tracker + Seasonal Calendar */}
-        <div className={PC}><AIInsightsPanel /></div>
+        {/* Row 5: News + Shipment Tracker + Seasonal Calendar + Supply-Demand */}
         <div className={PC}><LiveNewsPanel /></div>
         <div className={PC}><ShipmentTracker /></div>
         <div className={PC}><SeasonalCalendar /></div>
+        <div className={PC}><CurrencyMonitor /></div>
 
-        {/* Row 4: AI Scenarios (wide) + Supply-Demand (wide) */}
-        <div className={`xl:col-span-2 ${PC} p-4`}><AIScenarioPanel /></div>
+        {/* Row 6: Supply-Demand (wide) + Demand Scenarios (wide) */}
         <div className={`xl:col-span-2 ${PC} p-4`}><SupplyDemandPanel /></div>
-
-        {/* Row 5: Demand Scenarios (wide) + Cost & Margin (wide) */}
         <div className={`xl:col-span-2 ${PC} p-4`}><DemandScenarioPanel /></div>
-        <div className={`xl:col-span-2 ${PC}`}><CostMarginAnalyzer /></div>
 
-        {/* Row 6: Halal Cert + Compliance + Currency + Competitor Intel */}
+        {/* Row 7: Cost & Margin (wide) + Price Monitor (wide) */}
+        <div className={`xl:col-span-2 ${PC}`}><CostMarginAnalyzer /></div>
+        <div className={`xl:col-span-2 ${PC} p-4`}><PriceMonitorPanel /></div>
+
+        {/* Row 8: Halal Cert + Compliance + Competitor Intel + Risk Heatmap */}
         <div className={PC}><HalalCertTracker /></div>
         <div className={PC}><ComplianceDashboard /></div>
-        <div className={PC}><CurrencyMonitor /></div>
         <div className={PC}><CompetitorIntel /></div>
+        <div className={PC + " p-4"}><RiskHeatmap /></div>
 
-        {/* Row 7: Farm Health Grid (full width) */}
+        {/* Row 9: Farm Health Grid (full width) */}
         <div className={`col-span-full ${PC} p-4`}>
           <FarmHealthGrid farms={filteredFarms} onSelectFarm={(f) => onSelectFarm(f)} />
         </div>
 
-        {/* Row 8: Feed/Water + Breeding + Data Freshness + Action Log */}
+        {/* Row 10: Feed/Water + Breeding + Data Freshness + Action Log */}
         <div className={PC}><FeedWaterInventory /></div>
         <div className={PC}><BreedingLifecycleTracker /></div>
         <div className={PC}><DataFreshnessMonitor /></div>
         <div className={PC}><ActionLog /></div>
 
-        {/* Row 9: Price Monitor + Risk Heatmap + ESG */}
-        <div className={`xl:col-span-2 ${PC} p-4`}><PriceMonitorPanel /></div>
-        <div className={PC + " p-4"}><RiskHeatmap /></div>
+        {/* Row 11: ESG Tracker */}
         <div className={PC}><ESGTracker /></div>
       </div>
     </div>
