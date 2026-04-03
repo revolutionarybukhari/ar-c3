@@ -4,6 +4,9 @@ import { farms, suppliers, demandPoints, warehouses } from "@/data/mockData";
 import LayerPanel from "@/components/layout/LayerPanel";
 import LiveKpiStrip from "@/components/sidebar/LiveKpiStrip";
 import AlertsFeed from "@/components/sidebar/AlertsFeed";
+import LiveNewsPanel from "@/components/sidebar/LiveNewsPanel";
+import AIInsightsPanel from "@/components/sidebar/AIInsightsPanel";
+import LiveMediaPanel from "@/components/sidebar/LiveMediaPanel";
 import FarmDetailPanel from "@/components/map/FarmDetailPanel";
 import AIScenarioPanel from "@/components/dashboard/AIScenarioPanel";
 import SupplyDemandPanel from "@/components/dashboard/SupplyDemandPanel";
@@ -56,14 +59,6 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
 
   return (
     <div className="flex h-full">
-      {/* Left Sidebar — Layer Controls */}
-      <LayerPanel
-        visibleLayers={visibleLayers}
-        onToggleLayer={toggleLayer}
-        farmCounts={farmCounts}
-        alertCount={alertCount}
-      />
-
       {/* Center — Map + Bottom Panels */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Map area — takes ~55% of height */}
@@ -80,6 +75,14 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
               visibleLayers={visibleLayers}
             />
           </Suspense>
+
+          {/* Layer panel floating on map */}
+          <LayerPanel
+            visibleLayers={visibleLayers}
+            onToggleLayer={toggleLayer}
+            farmCounts={farmCounts}
+            alertCount={alertCount}
+          />
 
           {/* Farm detail overlay — slides in from right over map */}
           {selectedFarm && (
@@ -127,9 +130,24 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
 
       {/* Right Sidebar — Intel + KPIs */}
       <div className="w-[280px] shrink-0 border-l border-[#0f1a2e] bg-[#060a12] flex flex-col overflow-hidden">
+        {/* Live Media */}
+        <div className="border-b border-[#0f1a2e]">
+          <LiveMediaPanel />
+        </div>
+
         {/* KPI Section */}
         <div className="border-b border-[#0f1a2e]">
           <LiveKpiStrip />
+        </div>
+
+        {/* AI Insights */}
+        <div className="border-b border-[#0f1a2e]">
+          <AIInsightsPanel />
+        </div>
+
+        {/* News Feed */}
+        <div className="border-b border-[#0f1a2e]">
+          <LiveNewsPanel />
         </div>
 
         {/* Alerts Feed */}
