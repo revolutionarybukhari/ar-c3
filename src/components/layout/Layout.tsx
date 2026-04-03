@@ -6,7 +6,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div className="h-screen bg-[#060a12] text-foreground overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-[#060a12] text-foreground flex flex-col">
       {children}
     </div>
   );

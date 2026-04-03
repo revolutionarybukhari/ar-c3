@@ -30,7 +30,7 @@ function App() {
         activeRegion={activeRegion}
         onRegionChange={setActiveRegion}
       />
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1">
         <Suspense fallback={<LoadingFallback />}>
           {activeView === "command-center" && (
             <CommandCenter

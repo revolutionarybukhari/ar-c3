@@ -14,6 +14,11 @@ import DemandScenarioPanel from "@/components/dashboard/DemandScenarioPanel";
 import PriceMonitorPanel from "@/components/dashboard/PriceMonitorPanel";
 import RiskHeatmap from "@/components/dashboard/RiskHeatmap";
 import FarmHealthGrid from "@/components/dashboard/FarmHealthGrid";
+import SupplyChainMonitor from "@/components/dashboard/SupplyChainMonitor";
+import MacroStressIndex from "@/components/dashboard/MacroStressIndex";
+import DiseaseOutbreakMonitor from "@/components/dashboard/DiseaseOutbreakMonitor";
+import LivestockMarketTicker from "@/components/dashboard/LivestockMarketTicker";
+import WeatherImpactPanel from "@/components/dashboard/WeatherImpactPanel";
 
 const DualRegionMap = lazy(() => import("@/components/map/DualRegionMap"));
 
@@ -30,6 +35,8 @@ const DEFAULT_LAYERS: Record<string, boolean> = {
   demand: true,
   warehouses: true,
 };
+
+const PC = "bg-[#0a0f1c] rounded-lg border border-[#0f1a2e] overflow-hidden";
 
 export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm }: Props) {
   const [visibleLayers, setVisibleLayers] = useState(DEFAULT_LAYERS);
@@ -58,101 +65,97 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
   };
 
   return (
-    <div className="flex h-full">
-      {/* Center — Map + Bottom Panels */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Map area — takes ~55% of height */}
-        <div className="relative flex-[55] min-h-0">
-          <Suspense fallback={<div className="h-full bg-[#060a12] animate-pulse" />}>
-            <DualRegionMap
-              farms={filteredFarms}
-              suppliers={suppliers}
-              demandPoints={demandPoints}
-              warehouses={warehouses}
-              selectedFarm={selectedFarm}
-              onSelectFarm={onSelectFarm}
-              activeRegion={activeRegion}
-              visibleLayers={visibleLayers}
-            />
-          </Suspense>
-
-          {/* Layer panel floating on map */}
-          <LayerPanel
+    <div className="p-3 space-y-3">
+      {/* Map — scrolls with page */}
+      <div className="relative h-[55vh] min-h-[400px] rounded-lg overflow-hidden border border-[#0f1a2e]">
+        <Suspense fallback={<div className="h-full bg-[#060a12] animate-pulse" />}>
+          <DualRegionMap
+            farms={filteredFarms}
+            suppliers={suppliers}
+            demandPoints={demandPoints}
+            warehouses={warehouses}
+            selectedFarm={selectedFarm}
+            onSelectFarm={onSelectFarm}
+            activeRegion={activeRegion}
             visibleLayers={visibleLayers}
-            onToggleLayer={toggleLayer}
-            farmCounts={farmCounts}
-            alertCount={alertCount}
           />
+        </Suspense>
 
-          {/* Farm detail overlay — slides in from right over map */}
-          {selectedFarm && (
-            <div className="absolute top-0 right-0 bottom-0 w-[340px] z-[1000] bg-[#080c16]/95 backdrop-blur-xl border-l border-[#0f1a2e] overflow-y-auto">
-              <FarmDetailPanel farm={selectedFarm} onClose={() => onSelectFarm(null)} />
-            </div>
-          )}
-        </div>
+        <LayerPanel
+          visibleLayers={visibleLayers}
+          onToggleLayer={toggleLayer}
+          farmCounts={farmCounts}
+          alertCount={alertCount}
+        />
 
-        {/* Bottom panels — scrollable */}
-        <div className="flex-[45] min-h-0 overflow-y-auto border-t border-[#0f1a2e] bg-[#060a12]">
-          <div className="p-4 space-y-4">
-            {/* Supply-Demand + AI side by side */}
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
-              <div className="xl:col-span-7 bg-[#0a0f1c] rounded-lg border border-[#0f1a2e] p-4">
-                <SupplyDemandPanel />
-              </div>
-              <div className="xl:col-span-5 bg-[#0a0f1c] rounded-lg border border-[#0f1a2e] p-4">
-                <AIScenarioPanel />
-              </div>
-            </div>
-
-            {/* Farm Health Grid */}
-            <div className="bg-[#0a0f1c] rounded-lg border border-[#0f1a2e] p-4">
-              <FarmHealthGrid farms={filteredFarms} onSelectFarm={(f) => onSelectFarm(f)} />
-            </div>
-
-            {/* Demand Scenarios */}
-            <div className="bg-[#0a0f1c] rounded-lg border border-[#0f1a2e] p-4">
-              <DemandScenarioPanel />
-            </div>
-
-            {/* Price + Risk */}
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
-              <div className="xl:col-span-7 bg-[#0a0f1c] rounded-lg border border-[#0f1a2e] p-4">
-                <PriceMonitorPanel />
-              </div>
-              <div className="xl:col-span-5 bg-[#0a0f1c] rounded-lg border border-[#0f1a2e] p-4">
-                <RiskHeatmap />
-              </div>
-            </div>
+        {selectedFarm && (
+          <div className="absolute top-0 right-0 bottom-0 w-[340px] z-[1000] bg-[#080c16]/95 backdrop-blur-xl border-l border-[#0f1a2e] overflow-y-auto">
+            <FarmDetailPanel farm={selectedFarm} onClose={() => onSelectFarm(null)} />
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Right Sidebar — Intel + KPIs */}
-      <div className="w-[280px] shrink-0 border-l border-[#0f1a2e] bg-[#060a12] flex flex-col overflow-hidden">
-        {/* Live Media */}
-        <div className="border-b border-[#0f1a2e]">
+      {/* Panel grid — WorldMonitor style */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
+
+        {/* Live Media + KPIs + Market Ticker + Macro Stress */}
+        <div className={PC}>
           <LiveMediaPanel />
         </div>
-
-        {/* KPI Section */}
-        <div className="border-b border-[#0f1a2e]">
+        <div className={PC}>
           <LiveKpiStrip />
         </div>
+        <div className={PC}>
+          <LivestockMarketTicker />
+        </div>
+        <div className={PC}>
+          <MacroStressIndex />
+        </div>
 
-        {/* AI Insights */}
-        <div className="border-b border-[#0f1a2e]">
+        {/* Supply Chain + Disease + Weather + Alerts */}
+        <div className={PC}>
+          <SupplyChainMonitor />
+        </div>
+        <div className={PC}>
+          <DiseaseOutbreakMonitor />
+        </div>
+        <div className={PC}>
+          <WeatherImpactPanel />
+        </div>
+        <div className={PC}>
+          <AlertsFeed />
+        </div>
+
+        {/* AI Insights + News + AI Scenarios */}
+        <div className={PC}>
           <AIInsightsPanel />
         </div>
-
-        {/* News Feed */}
-        <div className="border-b border-[#0f1a2e]">
+        <div className={PC}>
           <LiveNewsPanel />
         </div>
+        <div className={`xl:col-span-2 ${PC} p-4`}>
+          <AIScenarioPanel />
+        </div>
 
-        {/* Alerts Feed */}
-        <div className="flex-1 min-h-0 overflow-y-auto">
-          <AlertsFeed />
+        {/* Supply-Demand (wide) + Demand Scenarios (wide) */}
+        <div className={`xl:col-span-2 ${PC} p-4`}>
+          <SupplyDemandPanel />
+        </div>
+        <div className={`xl:col-span-2 ${PC} p-4`}>
+          <DemandScenarioPanel />
+        </div>
+
+        {/* Farm Health Grid (full width) */}
+        <div className={`col-span-full ${PC} p-4`}>
+          <FarmHealthGrid farms={filteredFarms} onSelectFarm={(f) => onSelectFarm(f)} />
+        </div>
+
+        {/* Price Monitor + Risk Heatmap */}
+        <div className={`xl:col-span-2 ${PC} p-4`}>
+          <PriceMonitorPanel />
+        </div>
+        <div className={`xl:col-span-2 ${PC} p-4`}>
+          <RiskHeatmap />
         </div>
       </div>
     </div>
