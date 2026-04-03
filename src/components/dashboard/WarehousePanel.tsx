@@ -8,12 +8,14 @@ const healthDot: Record<HealthStatus, string> = {
   red: "bg-red-400",
   amber: "bg-amber-400",
   green: "bg-emerald-400",
+  white: "bg-slate-400",
 };
 
 const healthLabel: Record<HealthStatus, string> = {
   red: "Critical",
   amber: "At Risk",
   green: "Healthy",
+  white: "Unmonitored",
 };
 
 function capacityColor(pct: number): string {

@@ -7,7 +7,7 @@ interface Props {
   activeRegion: string;
 }
 
-export default function MeatingPoint({ activeRegion }: Props) {
+export default function MeatingPoint({ activeRegion: _activeRegion }: Props) {
   return (
     <div className="space-y-6 p-4 lg:p-6">
       <KpiStrip />

@@ -1,4 +1,4 @@
-export type HealthStatus = "red" | "amber" | "green";
+export type HealthStatus = "red" | "amber" | "green" | "white";
 export type SKU = "sheep" | "goat" | "cattle";
 export type Region = "indonesia" | "gcc";
 

@@ -33,24 +33,28 @@ const HEALTH_BG: Record<string, string> = {
   red: "bg-destructive",
   amber: "bg-warning",
   green: "bg-success",
+  white: "bg-slate-400",
 };
 
 const HEALTH_GRADIENT: Record<string, string> = {
   red: "from-red-600/30 via-red-500/10 to-transparent",
   amber: "from-amber-600/30 via-amber-500/10 to-transparent",
   green: "from-emerald-600/30 via-emerald-500/10 to-transparent",
+  white: "from-slate-600/30 via-slate-500/10 to-transparent",
 };
 
 const HEALTH_LABEL: Record<string, string> = {
   red: "Critical",
   amber: "At Risk",
   green: "Healthy",
+  white: "Unmonitored",
 };
 
-const STATUS_VARIANT: Record<string, "destructive" | "warning" | "success"> = {
+const STATUS_VARIANT: Record<string, "destructive" | "warning" | "success" | "outline"> = {
   red: "destructive",
   amber: "warning",
   green: "success",
+  white: "outline",
 };
 
 function statusBadgeVariant(

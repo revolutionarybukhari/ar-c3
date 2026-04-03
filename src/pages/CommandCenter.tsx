@@ -1,10 +1,11 @@
-import { useState, lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import type { Farm } from "@/types";
 import { farms, suppliers, demandPoints, warehouses } from "@/data/mockData";
 import KpiStrip from "@/components/dashboard/KpiStrip";
 import FarmHealthGrid from "@/components/dashboard/FarmHealthGrid";
 import SupplyDemandPanel from "@/components/dashboard/SupplyDemandPanel";
 import AIScenarioPanel from "@/components/dashboard/AIScenarioPanel";
+import DemandScenarioPanel from "@/components/dashboard/DemandScenarioPanel";
 import PriceMonitorPanel from "@/components/dashboard/PriceMonitorPanel";
 import RiskHeatmap from "@/components/dashboard/RiskHeatmap";
 import FarmDetailPanel from "@/components/map/FarmDetailPanel";
@@ -60,6 +61,9 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
 
       {/* Farm Health Grid */}
       <FarmHealthGrid farms={filteredFarms} onSelectFarm={(f) => onSelectFarm(f)} />
+
+      {/* Demand Scenarios */}
+      <DemandScenarioPanel />
 
       {/* Price Monitor + Risk Heatmap */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

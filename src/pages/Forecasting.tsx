@@ -7,7 +7,7 @@ interface Props {
   activeRegion: string;
 }
 
-export default function Forecasting({ activeRegion }: Props) {
+export default function Forecasting({ activeRegion: _activeRegion }: Props) {
   return (
     <div className="space-y-6 p-4 lg:p-6">
       <KpiStrip />

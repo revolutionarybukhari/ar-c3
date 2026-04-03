@@ -9,18 +9,21 @@ const severityLabel: Record<HealthStatus, string> = {
   red: "HIGH",
   amber: "MED",
   green: "LOW",
+  white: "N/A",
 };
 
 const severityBorderColor: Record<HealthStatus, string> = {
   red: "#ef4444",
   amber: "#f59e0b",
   green: "#22c55e",
+  white: "#94a3b8",
 };
 
 const severityBadgeClass: Record<HealthStatus, string> = {
   red: "text-red-400 bg-red-500/10",
   amber: "text-amber-400 bg-amber-500/10",
   green: "text-emerald-400 bg-emerald-500/10",
+  white: "text-slate-400 bg-slate-500/10",
 };
 
 const priorityDotColor: Record<AIRecommendation["priority"], string> = {

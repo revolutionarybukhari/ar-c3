@@ -34,6 +34,12 @@ const healthConfig: Record<HealthStatus, {
     gradient: "from-red-500 via-red-400 to-red-600",
     text: "text-red-400",
   },
+  white: {
+    dot: "bg-slate-400",
+    label: "Unmonitored",
+    gradient: "from-slate-500 via-slate-400 to-slate-600",
+    text: "text-slate-400",
+  },
 };
 
 const skuColors: Record<string, string> = {
@@ -176,6 +182,7 @@ const tabs: { key: HealthStatus | "all"; label: string }[] = [
   { key: "red", label: "Critical" },
   { key: "amber", label: "At Risk" },
   { key: "green", label: "Healthy" },
+  { key: "white", label: "Unmonitored" },
 ];
 
 export default function FarmHealthGrid({ farms, onSelectFarm }: FarmHealthGridProps) {
