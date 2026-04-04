@@ -100,13 +100,13 @@ export default function ExpandablePanel({
             {/* Modal content */}
             <div
               className={cn(
-                "relative w-[90vw] max-w-[1400px] max-h-[90vh] overflow-y-auto rounded-xl border border-[#1a2e4a] bg-[#0a0f1c] shadow-2xl transition-transform duration-200",
+                "relative w-[95vw] sm:w-[90vw] max-w-[1400px] max-h-[85vh] sm:max-h-[90vh] overflow-y-auto rounded-lg sm:rounded-xl border border-[#1a2e4a] bg-[#0a0f1c] shadow-2xl transition-transform duration-200",
                 isVisible ? "scale-100" : "scale-95",
                 expandedClassName
               )}
             >
               {/* Sticky header */}
-              <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#0f1a2e] bg-[#0a0f1c]/95 px-6 py-4 backdrop-blur-sm">
+              <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#0f1a2e] bg-[#0a0f1c]/95 px-3 sm:px-6 py-3 sm:py-4 backdrop-blur-sm">
                 <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400">
                   {title}
                 </span>
@@ -122,7 +122,7 @@ export default function ExpandablePanel({
               </div>
 
               {/* Panel content */}
-              <div className="p-6">{children}</div>
+              <div className="p-3 sm:p-6">{children}</div>
             </div>
           </div>,
           document.body

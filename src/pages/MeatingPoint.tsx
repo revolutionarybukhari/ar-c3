@@ -22,14 +22,14 @@ const PC = "bg-[#0a0f1c] rounded-lg border border-[#0f1a2e] overflow-hidden";
 
 export default function MeatingPoint({ activeRegion: _activeRegion }: Props) {
   return (
-    <div className="p-3 space-y-3">
+    <div className="p-2 sm:p-3 space-y-2 sm:space-y-3">
       {/* KPI Strip — full width hero */}
-      <div className={`${PC} p-4`}>
+      <div className={`${PC} p-3 sm:p-4`}>
         <KpiStrip />
       </div>
 
       {/* Panel grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-3">
 
         {/* Row 1: Market Ticker + Price Monitor (wide) + Currency */}
         <div className={PC}><LivestockMarketTicker /></div>

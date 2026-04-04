@@ -79,23 +79,23 @@ function HeroKpi({ label, value, delta, deltaLabel, icon: Icon, color, sparkData
   ).join(" ");
 
   return (
-    <div className={`${PC} p-5 flex flex-col justify-between`}>
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[13px] font-medium text-slate-400">{label}</span>
-        <Icon className="h-4 w-4" style={{ color }} />
+    <div className={`${PC} p-3 sm:p-5 flex flex-col justify-between`}>
+      <div className="flex items-center justify-between mb-2 sm:mb-3">
+        <span className="text-[11px] sm:text-[13px] font-medium text-slate-400">{label}</span>
+        <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" style={{ color }} />
       </div>
-      <div className="text-[32px] font-bold text-white tracking-tight leading-none mb-2 tabular-nums">
+      <div className="text-[22px] sm:text-[32px] font-bold text-white tracking-tight leading-none mb-1.5 sm:mb-2 tabular-nums">
         {value}
       </div>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          {isUp ? <TrendingUp className="h-3.5 w-3.5 text-emerald-400" /> : <TrendingDown className="h-3.5 w-3.5 text-red-400" />}
-          <span className={`text-[13px] font-semibold ${isUp ? "text-emerald-400" : "text-red-400"}`}>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+          {isUp ? <TrendingUp className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-emerald-400" /> : <TrendingDown className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-red-400" />}
+          <span className={`text-[11px] sm:text-[13px] font-semibold ${isUp ? "text-emerald-400" : "text-red-400"}`}>
             {isUp ? "↑" : "↓"} {Math.abs(delta)}%
           </span>
-          <span className="text-[12px] text-slate-500 ml-1">{deltaLabel}</span>
+          <span className="text-[10px] sm:text-[12px] text-slate-500">{deltaLabel}</span>
         </div>
-        <svg width="120" height="40" viewBox="0 0 120 40" className="opacity-50">
+        <svg width="80" height="30" viewBox="0 0 120 40" className="opacity-50 hidden sm:block shrink-0">
           <defs>
             <linearGradient id={`grad-${label}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={color} stopOpacity="0.3" />
@@ -123,12 +123,12 @@ function HeroKpi({ label, value, delta, deltaLabel, icon: Icon, color, sparkData
 /* ── Section Header (ServiceNow style) ─────────────────────────── */
 function SectionHeader({ title, subtitle, color }: { title: string; subtitle: string; color: string }) {
   return (
-    <div className="mt-8 mb-4">
-      <div className="flex items-center gap-3">
-        <div className={`h-5 w-1.5 rounded-full ${color}`} />
+    <div className="mt-6 sm:mt-8 mb-3 sm:mb-4">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className={`h-4 sm:h-5 w-1 sm:w-1.5 rounded-full ${color}`} />
         <div>
-          <h2 className="text-[18px] font-bold text-white">{title}</h2>
-          <p className="text-[13px] text-slate-500">{subtitle}</p>
+          <h2 className="text-[15px] sm:text-[18px] font-bold text-white">{title}</h2>
+          <p className="text-[11px] sm:text-[13px] text-slate-500">{subtitle}</p>
         </div>
       </div>
     </div>
@@ -163,18 +163,18 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
 
   return (
     <div className="overflow-y-auto" style={{ height: "calc(100vh - 40px)" }}>
-      <div className="max-w-[1600px] mx-auto px-6 py-5">
+      <div className="max-w-[1600px] mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-5">
 
         {/* ── Page Title ─────────────────────────────────────── */}
-        <div className="mb-6">
-          <h1 className="text-[22px] font-bold text-white mb-1">AR C3 — Command & Control Center</h1>
-          <p className="text-[14px] text-slate-500">
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-[17px] sm:text-[22px] font-bold text-white mb-1">AR C3 — Command & Control Center</h1>
+          <p className="text-[12px] sm:text-[14px] text-slate-500">
             Monitor supply chain health, pricing intelligence, and AI-optimized resource allocation across 21 AAAID member countries.
           </p>
         </div>
 
         {/* ── Hero KPI Row ───────────────────────────────────── */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4 mb-4 sm:mb-6">
           <HeroKpi label="Total Livestock" value="142,500" delta={8.3} deltaLabel="Last 30 days" icon={Activity} color="#22c55e" sparkData={[105,112,108,118,125,130,128,135,140,142]} />
           <HeroKpi label="Active Farms" value="22" delta={-4.5} deltaLabel="vs. last month" icon={ShieldCheck} color="#06b6d4" sparkData={[28,26,25,24,23,22,23,22,22,22]} />
           <HeroKpi label="Avg. Price" value="$4.85/kg" delta={3.2} deltaLabel="Last 30 days" icon={DollarSign} color="#f59e0b" sparkData={[4.2,4.3,4.1,4.4,4.5,4.6,4.7,4.65,4.8,4.85]} />
@@ -183,7 +183,7 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
         </div>
 
         {/* ── Map ────────────────────────────────────────────── */}
-        <div className="relative h-[45vh] min-h-[350px] rounded-2xl overflow-hidden border border-[#0f1a2e] mb-6">
+        <div className="relative h-[35vh] sm:h-[40vh] md:h-[45vh] min-h-[250px] sm:min-h-[350px] rounded-xl sm:rounded-2xl overflow-hidden border border-[#0f1a2e] mb-4 sm:mb-6">
           <Suspense fallback={<div className="h-full bg-[#060a12] animate-pulse" />}>
             <DualRegionMap
               farms={filteredFarms}
@@ -203,7 +203,7 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
             alertCount={alertCount}
           />
           {selectedFarm && (
-            <div className="absolute top-0 right-0 bottom-0 w-[380px] z-[1000] bg-[#080c16]/95 backdrop-blur-xl border-l border-[#0f1a2e] overflow-y-auto">
+            <div className="absolute top-0 right-0 bottom-0 w-full sm:w-[380px] z-[1000] bg-[#080c16]/95 backdrop-blur-xl border-l border-[#0f1a2e] overflow-y-auto">
               <FarmDetailPanel farm={selectedFarm} onClose={() => onSelectFarm(null)} />
             </div>
           )}
@@ -218,8 +218,8 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
           color="bg-emerald-400"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
-          <ExpandablePanel title="Farm Health Grid" className="xl:col-span-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 sm:gap-4 mb-2">
+          <ExpandablePanel title="Farm Health Grid" className="sm:col-span-2 xl:col-span-2">
             <div className="max-h-[300px] overflow-hidden p-3">
               <FarmHealthGrid farms={filteredFarms} onSelectFarm={(f) => onSelectFarm(f)} />
             </div>
@@ -232,7 +232,7 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
           </ExpandablePanel>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 sm:gap-4 mb-2">
           <ExpandablePanel title="Feed & Water Inventory">
             <div className="max-h-[260px] overflow-hidden"><FeedWaterInventory /></div>
           </ExpandablePanel>
@@ -247,7 +247,7 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
           </ExpandablePanel>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-4">
           <ExpandablePanel title="Breeding & Lifecycle">
             <div className="max-h-[240px] overflow-hidden"><BreedingLifecycleTracker /></div>
           </ExpandablePanel>
@@ -268,8 +268,8 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
           color="bg-amber-400"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
-          <ExpandablePanel title="Price Monitor" className="xl:col-span-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 sm:gap-4 mb-2">
+          <ExpandablePanel title="Price Monitor" className="sm:col-span-2 xl:col-span-2">
             <div className="max-h-[300px] overflow-hidden p-3"><PriceMonitorPanel /></div>
           </ExpandablePanel>
           <ExpandablePanel title="Market Ticker">
@@ -280,8 +280,8 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
           </ExpandablePanel>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
-          <ExpandablePanel title="Cost & Margin" className="xl:col-span-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 sm:gap-4 mb-2">
+          <ExpandablePanel title="Cost & Margin" className="sm:col-span-2 xl:col-span-2">
             <div className="max-h-[260px] overflow-hidden"><CostMarginAnalyzer /></div>
           </ExpandablePanel>
           <ExpandablePanel title="Competitor Intel">
@@ -292,7 +292,7 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
           </ExpandablePanel>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-4">
           <ExpandablePanel title="Shipment Tracker">
             <div className="max-h-[240px] overflow-hidden"><ShipmentTracker /></div>
           </ExpandablePanel>
@@ -313,7 +313,7 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
           color="bg-purple-400"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 sm:gap-4 mb-2">
           <ExpandablePanel title="AI Supply Balancer" className="xl:col-span-2 border-purple-500/20">
             <div className="max-h-[300px] overflow-hidden"><AISupplyBalancer /></div>
           </ExpandablePanel>
@@ -322,16 +322,16 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
           </ExpandablePanel>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
-          <ExpandablePanel title="Supply & Demand" className="xl:col-span-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 sm:gap-4 mb-2">
+          <ExpandablePanel title="Supply & Demand" className="sm:col-span-2 xl:col-span-2">
             <div className="max-h-[280px] overflow-hidden p-3"><SupplyDemandPanel /></div>
           </ExpandablePanel>
-          <ExpandablePanel title="Demand Scenarios" className="xl:col-span-2">
+          <ExpandablePanel title="Demand Scenarios" className="sm:col-span-2 xl:col-span-2">
             <div className="max-h-[280px] overflow-hidden p-3"><DemandScenarioPanel /></div>
           </ExpandablePanel>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 sm:gap-4 mb-2">
           <ExpandablePanel title="Macro Stress Index">
             <div className="max-h-[260px] overflow-hidden"><MacroStressIndex /></div>
           </ExpandablePanel>
@@ -346,7 +346,7 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
           </ExpandablePanel>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 pb-8">
           <ExpandablePanel title="Action Log">
             <div className="max-h-[240px] overflow-hidden"><ActionLog /></div>
           </ExpandablePanel>
