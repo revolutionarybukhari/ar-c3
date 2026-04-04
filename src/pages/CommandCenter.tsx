@@ -1,4 +1,5 @@
 import { useState, useMemo, lazy, Suspense } from "react";
+import { TrendingUp, TrendingDown, Activity, ShieldCheck, DollarSign, AlertTriangle, Syringe } from "lucide-react";
 import type { Farm } from "@/types";
 import { farms, suppliers, demandPoints, warehouses } from "@/data/mockData";
 import LayerPanel from "@/components/layout/LayerPanel";
@@ -38,15 +39,8 @@ import RiskHeatmap from "@/components/dashboard/RiskHeatmap";
 import ActionLog from "@/components/dashboard/ActionLog";
 
 // Sidebar / Live panels
-import LiveKpiStrip from "@/components/sidebar/LiveKpiStrip";
 import AlertsFeed from "@/components/sidebar/AlertsFeed";
 import LiveNewsPanel from "@/components/sidebar/LiveNewsPanel";
-import LiveMediaPanel from "@/components/sidebar/LiveMediaPanel";
-
-// Compact summary cards
-import SupplyHealthSummary from "@/components/compact/SupplyHealthSummary";
-import DemandPriceSummary from "@/components/compact/DemandPriceSummary";
-import IntegratedOptSummary from "@/components/compact/IntegratedOptSummary";
 
 const DualRegionMap = lazy(() => import("@/components/map/DualRegionMap"));
 
@@ -64,16 +58,79 @@ const DEFAULT_LAYERS: Record<string, boolean> = {
   warehouses: true,
 };
 
-/* Section header component */
+const PC = "bg-[#0a0f1c] rounded-2xl border border-[#0f1a2e] overflow-hidden";
+
+/* ── Hero KPI Card (ServiceNow style) ──────────────────────────── */
+function HeroKpi({ label, value, delta, deltaLabel, icon: Icon, color, sparkData }: {
+  label: string;
+  value: string;
+  delta: number;
+  deltaLabel: string;
+  icon: typeof Activity;
+  color: string;
+  sparkData: number[];
+}) {
+  const isUp = delta > 0;
+  const max = Math.max(...sparkData);
+  const min = Math.min(...sparkData);
+  const range = max - min || 1;
+  const points = sparkData.map((v, i) =>
+    `${(i / (sparkData.length - 1)) * 120},${40 - ((v - min) / range) * 36}`
+  ).join(" ");
+
+  return (
+    <div className={`${PC} p-5 flex flex-col justify-between`}>
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[13px] font-medium text-slate-400">{label}</span>
+        <Icon className="h-4 w-4" style={{ color }} />
+      </div>
+      <div className="text-[32px] font-bold text-white tracking-tight leading-none mb-2 tabular-nums">
+        {value}
+      </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          {isUp ? <TrendingUp className="h-3.5 w-3.5 text-emerald-400" /> : <TrendingDown className="h-3.5 w-3.5 text-red-400" />}
+          <span className={`text-[13px] font-semibold ${isUp ? "text-emerald-400" : "text-red-400"}`}>
+            {isUp ? "↑" : "↓"} {Math.abs(delta)}%
+          </span>
+          <span className="text-[12px] text-slate-500 ml-1">{deltaLabel}</span>
+        </div>
+        <svg width="120" height="40" viewBox="0 0 120 40" className="opacity-50">
+          <defs>
+            <linearGradient id={`grad-${label}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+              <stop offset="100%" stopColor={color} stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <polygon
+            points={`0,40 ${points} 120,40`}
+            fill={`url(#grad-${label})`}
+          />
+          <polyline
+            fill="none"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            points={points}
+          />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+/* ── Section Header (ServiceNow style) ─────────────────────────── */
 function SectionHeader({ title, subtitle, color }: { title: string; subtitle: string; color: string }) {
   return (
-    <div className="flex items-center gap-3 col-span-full">
-      <div className={`h-3 w-1 rounded-full ${color}`} />
-      <div>
-        <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-300">{title}</h2>
-        <p className="text-[8px] text-slate-600 uppercase tracking-wider">{subtitle}</p>
+    <div className="mt-8 mb-4">
+      <div className="flex items-center gap-3">
+        <div className={`h-5 w-1.5 rounded-full ${color}`} />
+        <div>
+          <h2 className="text-[18px] font-bold text-white">{title}</h2>
+          <p className="text-[13px] text-slate-500">{subtitle}</p>
+        </div>
       </div>
-      <div className="flex-1 h-px bg-[#0f1a2e]" />
     </div>
   );
 }
@@ -105,11 +162,28 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
   };
 
   return (
-    <div className="h-[calc(100vh-40px)] flex flex-col overflow-hidden">
-      {/* Top: Map + 3 Summary Cards */}
-      <div className="flex gap-2 p-2 shrink-0" style={{ height: "32vh", minHeight: 220 }}>
-        {/* Map */}
-        <div className="relative flex-1 rounded-lg overflow-hidden border border-[#0f1a2e]">
+    <div className="overflow-y-auto" style={{ height: "calc(100vh - 40px)" }}>
+      <div className="max-w-[1600px] mx-auto px-6 py-5">
+
+        {/* ── Page Title ─────────────────────────────────────── */}
+        <div className="mb-6">
+          <h1 className="text-[22px] font-bold text-white mb-1">AR C3 — Command & Control Center</h1>
+          <p className="text-[14px] text-slate-500">
+            Monitor supply chain health, pricing intelligence, and AI-optimized resource allocation across 21 AAAID member countries.
+          </p>
+        </div>
+
+        {/* ── Hero KPI Row ───────────────────────────────────── */}
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+          <HeroKpi label="Total Livestock" value="142,500" delta={8.3} deltaLabel="Last 30 days" icon={Activity} color="#22c55e" sparkData={[105,112,108,118,125,130,128,135,140,142]} />
+          <HeroKpi label="Active Farms" value="22" delta={-4.5} deltaLabel="vs. last month" icon={ShieldCheck} color="#06b6d4" sparkData={[28,26,25,24,23,22,23,22,22,22]} />
+          <HeroKpi label="Avg. Price" value="$4.85/kg" delta={3.2} deltaLabel="Last 30 days" icon={DollarSign} color="#f59e0b" sparkData={[4.2,4.3,4.1,4.4,4.5,4.6,4.7,4.65,4.8,4.85]} />
+          <HeroKpi label="Disease Alerts" value="3" delta={50} deltaLabel="vs. last week" icon={AlertTriangle} color="#ef4444" sparkData={[0,1,0,1,2,1,2,2,3,3]} />
+          <HeroKpi label="Vaccination Rate" value="87%" delta={2.1} deltaLabel="Last 30 days" icon={Syringe} color="#a78bfa" sparkData={[78,80,81,82,83,84,85,85,86,87]} />
+        </div>
+
+        {/* ── Map ────────────────────────────────────────────── */}
+        <div className="relative h-[45vh] min-h-[350px] rounded-2xl overflow-hidden border border-[#0f1a2e] mb-6">
           <Suspense fallback={<div className="h-full bg-[#060a12] animate-pulse" />}>
             <DualRegionMap
               farms={filteredFarms}
@@ -129,231 +203,158 @@ export default function CommandCenter({ activeRegion, selectedFarm, onSelectFarm
             alertCount={alertCount}
           />
           {selectedFarm && (
-            <div className="absolute top-0 right-0 bottom-0 w-[340px] z-[1000] bg-[#080c16]/95 backdrop-blur-xl border-l border-[#0f1a2e] overflow-y-auto">
+            <div className="absolute top-0 right-0 bottom-0 w-[380px] z-[1000] bg-[#080c16]/95 backdrop-blur-xl border-l border-[#0f1a2e] overflow-y-auto">
               <FarmDetailPanel farm={selectedFarm} onClose={() => onSelectFarm(null)} />
             </div>
           )}
         </div>
 
-        {/* 3 Summary Cards stacked */}
-        <div className="flex flex-col gap-2 w-[260px] shrink-0">
-          <div className="flex-1 rounded-lg border border-emerald-500/20 bg-[#0a0f1c] overflow-hidden">
-            <SupplyHealthSummary />
-          </div>
-          <div className="flex-1 rounded-lg border border-amber-500/20 bg-[#0a0f1c] overflow-hidden">
-            <DemandPriceSummary />
-          </div>
-          <div className="flex-1 rounded-lg border border-purple-500/20 bg-[#0a0f1c] overflow-hidden">
-            <IntegratedOptSummary />
-          </div>
-        </div>
-      </div>
+        {/* ═══════════════════════════════════════════════════════
+            SECTION 1: SUPPLY SIDE
+            ═══════════════════════════════════════════════════════ */}
+        <SectionHeader
+          title="Supply Side"
+          subtitle="Health status, vaccination, disease outbreaks, and farm monitoring across all regions."
+          color="bg-emerald-400"
+        />
 
-      {/* Bottom: 3-Section Panel Grid */}
-      <div className="flex-1 overflow-y-auto px-2 pb-2">
-        <div className="grid grid-cols-12 gap-2">
-
-          {/* ═══════════════ SECTION 1: SUPPLY SIDE ═══════════════ */}
-          <SectionHeader
-            title="Supply Side"
-            subtitle="Health Check • Vaccination • Disease • Farm Status"
-            color="bg-emerald-400"
-          />
-
-          <ExpandablePanel title="Farm Health Grid" className="col-span-4">
-            <div className="max-h-[180px] overflow-hidden p-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
+          <ExpandablePanel title="Farm Health Grid" className="xl:col-span-2">
+            <div className="max-h-[300px] overflow-hidden p-3">
               <FarmHealthGrid farms={filteredFarms} onSelectFarm={(f) => onSelectFarm(f)} />
             </div>
           </ExpandablePanel>
-
-          <ExpandablePanel title="Disease Outbreak Monitor" className="col-span-2">
-            <div className="max-h-[180px] overflow-hidden">
-              <DiseaseOutbreakMonitor />
-            </div>
+          <ExpandablePanel title="Disease Outbreak Monitor">
+            <div className="max-h-[300px] overflow-hidden"><DiseaseOutbreakMonitor /></div>
           </ExpandablePanel>
-
-          <ExpandablePanel title="Supply Chain Monitor" className="col-span-2">
-            <div className="max-h-[180px] overflow-hidden">
-              <SupplyChainMonitor />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Feed & Water Inventory" className="col-span-2">
-            <div className="max-h-[180px] overflow-hidden">
-              <FeedWaterInventory />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Halal Certification" className="col-span-2">
-            <div className="max-h-[180px] overflow-hidden">
-              <HalalCertTracker />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Weather Impact" className="col-span-3">
-            <div className="max-h-[140px] overflow-hidden">
-              <WeatherImpactPanel />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Breeding & Lifecycle" className="col-span-3">
-            <div className="max-h-[140px] overflow-hidden">
-              <BreedingLifecycleTracker />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Compliance Dashboard" className="col-span-3">
-            <div className="max-h-[140px] overflow-hidden">
-              <ComplianceDashboard />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Data Freshness" className="col-span-3">
-            <div className="max-h-[140px] overflow-hidden">
-              <DataFreshnessMonitor />
-            </div>
-          </ExpandablePanel>
-
-          {/* ═══════════════ SECTION 2: DEMAND SIDE ═══════════════ */}
-          <SectionHeader
-            title="Demand Side"
-            subtitle="Pricing • Market Intelligence • Currency • Seasonal"
-            color="bg-amber-400"
-          />
-
-          <ExpandablePanel title="Price Monitor" className="col-span-4">
-            <div className="max-h-[180px] overflow-hidden p-2">
-              <PriceMonitorPanel />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Market Ticker" className="col-span-2">
-            <div className="max-h-[180px] overflow-hidden">
-              <LivestockMarketTicker />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Cost & Margin" className="col-span-2">
-            <div className="max-h-[180px] overflow-hidden">
-              <CostMarginAnalyzer />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Currency Monitor" className="col-span-2">
-            <div className="max-h-[180px] overflow-hidden">
-              <CurrencyMonitor />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Competitor Intel" className="col-span-2">
-            <div className="max-h-[180px] overflow-hidden">
-              <CompetitorIntel />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Seasonal Calendar" className="col-span-3">
-            <div className="max-h-[140px] overflow-hidden">
-              <SeasonalCalendar />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Shipment Tracker" className="col-span-3">
-            <div className="max-h-[140px] overflow-hidden">
-              <ShipmentTracker />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Live News" className="col-span-3">
-            <div className="max-h-[140px] overflow-hidden">
-              <LiveNewsPanel />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Alerts Feed" className="col-span-3">
-            <div className="max-h-[140px] overflow-hidden">
-              <AlertsFeed />
-            </div>
-          </ExpandablePanel>
-
-          {/* ═══════════════ SECTION 3: INTEGRATED VIEW ═══════════════ */}
-          <SectionHeader
-            title="Integrated View"
-            subtitle="Risk Management • Price & Resource Optimization • AI Scenarios"
-            color="bg-purple-400"
-          />
-
-          <ExpandablePanel title="AI Supply Balancer" className="col-span-3 border-purple-500/20">
-            <div className="max-h-[180px] overflow-hidden">
-              <AISupplyBalancer />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="AI Risk Predictor" className="col-span-3 border-purple-500/20">
-            <div className="max-h-[180px] overflow-hidden">
-              <AIRiskPredictor />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Supply & Demand" className="col-span-3">
-            <div className="max-h-[180px] overflow-hidden p-2">
-              <SupplyDemandPanel />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Macro Stress Index" className="col-span-3">
-            <div className="max-h-[180px] overflow-hidden">
-              <MacroStressIndex />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="AI Command Intelligence" className="col-span-3 border-purple-500/10">
-            <div className="max-h-[140px] overflow-hidden">
-              <AIInsightsPanel />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="AI Scenarios" className="col-span-3 border-purple-500/10">
-            <div className="max-h-[140px] overflow-hidden p-2">
-              <AIScenarioPanel />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Demand Scenarios" className="col-span-2">
-            <div className="max-h-[140px] overflow-hidden p-2">
-              <DemandScenarioPanel />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Risk Heatmap" className="col-span-2">
-            <div className="max-h-[140px] overflow-hidden p-2">
-              <RiskHeatmap />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Action Log" className="col-span-2">
-            <div className="max-h-[140px] overflow-hidden">
-              <ActionLog />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="ESG & Sustainability" className="col-span-2">
-            <div className="max-h-[140px] overflow-hidden">
-              <ESGTracker />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Live KPIs" className="col-span-2">
-            <div className="max-h-[140px] overflow-hidden">
-              <LiveKpiStrip />
-            </div>
-          </ExpandablePanel>
-
-          <ExpandablePanel title="Live Media" className="col-span-2">
-            <div className="max-h-[140px] overflow-hidden">
-              <LiveMediaPanel />
-            </div>
+          <ExpandablePanel title="Supply Chain Monitor">
+            <div className="max-h-[300px] overflow-hidden"><SupplyChainMonitor /></div>
           </ExpandablePanel>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
+          <ExpandablePanel title="Feed & Water Inventory">
+            <div className="max-h-[260px] overflow-hidden"><FeedWaterInventory /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Halal Certification">
+            <div className="max-h-[260px] overflow-hidden"><HalalCertTracker /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Weather Impact">
+            <div className="max-h-[260px] overflow-hidden"><WeatherImpactPanel /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Compliance Dashboard">
+            <div className="max-h-[260px] overflow-hidden"><ComplianceDashboard /></div>
+          </ExpandablePanel>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <ExpandablePanel title="Breeding & Lifecycle">
+            <div className="max-h-[240px] overflow-hidden"><BreedingLifecycleTracker /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Data Freshness">
+            <div className="max-h-[240px] overflow-hidden"><DataFreshnessMonitor /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="ESG & Sustainability">
+            <div className="max-h-[240px] overflow-hidden"><ESGTracker /></div>
+          </ExpandablePanel>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════
+            SECTION 2: DEMAND SIDE
+            ═══════════════════════════════════════════════════════ */}
+        <SectionHeader
+          title="Demand Side"
+          subtitle="Pricing by country, region, and outlet. Market intelligence, currency, and seasonal demand."
+          color="bg-amber-400"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
+          <ExpandablePanel title="Price Monitor" className="xl:col-span-2">
+            <div className="max-h-[300px] overflow-hidden p-3"><PriceMonitorPanel /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Market Ticker">
+            <div className="max-h-[300px] overflow-hidden"><LivestockMarketTicker /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Currency Monitor">
+            <div className="max-h-[300px] overflow-hidden"><CurrencyMonitor /></div>
+          </ExpandablePanel>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
+          <ExpandablePanel title="Cost & Margin" className="xl:col-span-2">
+            <div className="max-h-[260px] overflow-hidden"><CostMarginAnalyzer /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Competitor Intel">
+            <div className="max-h-[260px] overflow-hidden"><CompetitorIntel /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Seasonal Calendar">
+            <div className="max-h-[260px] overflow-hidden"><SeasonalCalendar /></div>
+          </ExpandablePanel>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <ExpandablePanel title="Shipment Tracker">
+            <div className="max-h-[240px] overflow-hidden"><ShipmentTracker /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Live News">
+            <div className="max-h-[240px] overflow-hidden"><LiveNewsPanel /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Alerts Feed">
+            <div className="max-h-[240px] overflow-hidden"><AlertsFeed /></div>
+          </ExpandablePanel>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════
+            SECTION 3: INTEGRATED VIEW
+            ═══════════════════════════════════════════════════════ */}
+        <SectionHeader
+          title="Integrated View"
+          subtitle="Risk management, price & resource optimization — AI-driven scenarios that balance supply with demand."
+          color="bg-purple-400"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
+          <ExpandablePanel title="AI Supply Balancer" className="xl:col-span-2 border-purple-500/20">
+            <div className="max-h-[300px] overflow-hidden"><AISupplyBalancer /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="AI Risk Predictor" className="xl:col-span-2 border-purple-500/20">
+            <div className="max-h-[300px] overflow-hidden"><AIRiskPredictor /></div>
+          </ExpandablePanel>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
+          <ExpandablePanel title="Supply & Demand" className="xl:col-span-2">
+            <div className="max-h-[280px] overflow-hidden p-3"><SupplyDemandPanel /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Demand Scenarios" className="xl:col-span-2">
+            <div className="max-h-[280px] overflow-hidden p-3"><DemandScenarioPanel /></div>
+          </ExpandablePanel>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-2">
+          <ExpandablePanel title="Macro Stress Index">
+            <div className="max-h-[260px] overflow-hidden"><MacroStressIndex /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="AI Command Intelligence" className="border-purple-500/10">
+            <div className="max-h-[260px] overflow-hidden"><AIInsightsPanel /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="AI Scenarios" className="border-purple-500/10">
+            <div className="max-h-[260px] overflow-hidden p-3"><AIScenarioPanel /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Risk Heatmap">
+            <div className="max-h-[260px] overflow-hidden p-3"><RiskHeatmap /></div>
+          </ExpandablePanel>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
+          <ExpandablePanel title="Action Log">
+            <div className="max-h-[240px] overflow-hidden"><ActionLog /></div>
+          </ExpandablePanel>
+          <ExpandablePanel title="Live News">
+            <div className="max-h-[240px] overflow-hidden"><LiveNewsPanel /></div>
+          </ExpandablePanel>
+        </div>
+
       </div>
     </div>
   );

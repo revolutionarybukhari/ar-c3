@@ -47,8 +47,33 @@ const DEMAND_COLORS: Record<string, string> = {
   critical: "#ef4444",
 };
 
-const MAP_CENTER: L.LatLngExpression = [5, 80];
+const MAP_CENTER: L.LatLngExpression = [22, 42];
 const MAP_ZOOM = 3;
+
+// 21 AAAID Member Countries
+const AAAID_COUNTRIES: { name: string; code: string; lat: number; lng: number }[] = [
+  { name: "Saudi Arabia",  code: "SAU", lat: 24.71, lng: 46.68 },
+  { name: "Kuwait",        code: "KWT", lat: 29.38, lng: 47.99 },
+  { name: "UAE",            code: "ARE", lat: 24.45, lng: 54.65 },
+  { name: "Iraq",           code: "IRQ", lat: 33.31, lng: 44.37 },
+  { name: "Sudan",          code: "SDN", lat: 15.50, lng: 32.56 },
+  { name: "Qatar",          code: "QAT", lat: 25.29, lng: 51.53 },
+  { name: "Egypt",          code: "EGY", lat: 30.04, lng: 31.24 },
+  { name: "Algeria",        code: "DZA", lat: 36.75, lng: 3.04 },
+  { name: "Morocco",        code: "MAR", lat: 33.97, lng: -6.85 },
+  { name: "Bahrain",        code: "BHR", lat: 26.07, lng: 50.56 },
+  { name: "Oman",           code: "OMN", lat: 23.59, lng: 58.55 },
+  { name: "Tunisia",        code: "TUN", lat: 36.81, lng: 10.17 },
+  { name: "Mauritania",     code: "MRT", lat: 18.09, lng: -15.98 },
+  { name: "Jordan",         code: "JOR", lat: 31.96, lng: 35.95 },
+  { name: "Syria",          code: "SYR", lat: 33.51, lng: 36.29 },
+  { name: "Somalia",        code: "SOM", lat: 2.05, lng: 45.32 },
+  { name: "Comoros",         code: "COM", lat: -11.70, lng: 43.26 },
+  { name: "Yemen",          code: "YEM", lat: 15.37, lng: 44.21 },
+  { name: "Lebanon",        code: "LBN", lat: 33.89, lng: 35.50 },
+  { name: "Djibouti",       code: "DJI", lat: 11.59, lng: 43.15 },
+  { name: "Palestine",      code: "PSE", lat: 31.90, lng: 35.20 },
+];
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -81,6 +106,17 @@ function haversineDistance(
   const dx = a[0] - b[0];
   const dy = a[1] - b[1];
   return Math.sqrt(dx * dx + dy * dy);
+}
+
+function makeCountryLabel(_name: string, code: string) {
+  return L.divIcon({
+    className: "",
+    iconSize: [60, 20],
+    iconAnchor: [30, 10],
+    html: `<div style="text-align:center;pointer-events:none">
+      <div style="font-size:7px;font-weight:700;letter-spacing:0.12em;color:#94a3b8;opacity:0.7;font-family:ui-monospace,monospace;text-shadow:0 0 8px rgba(0,0,0,0.8)">${code}</div>
+    </div>`,
+  });
 }
 
 function makeSupplierIcon(health: string) {
@@ -302,6 +338,35 @@ export default function DualRegionMap({
       >
         <InvalidateSize />
         <TileLayer url={TILE_URL} attribution={TILE_ATTR} />
+
+        {/* AAAID Country labels */}
+        {AAAID_COUNTRIES.map((c) => (
+          <Marker
+            key={c.code}
+            position={[c.lat, c.lng]}
+            icon={makeCountryLabel(c.name, c.code)}
+            interactive={false}
+          />
+        ))}
+
+        {/* AAAID Country boundary dots */}
+        {AAAID_COUNTRIES.map((c) => (
+          <CircleMarker
+            key={`dot-${c.code}`}
+            center={[c.lat, c.lng]}
+            radius={3}
+            pathOptions={{
+              color: "#06b6d4",
+              fillColor: "#06b6d4",
+              fillOpacity: 0.3,
+              weight: 1,
+            }}
+          >
+            <Tooltip direction="top" offset={[0, -6]} className="dark-tooltip">
+              <span style={{ fontSize: 11, fontWeight: 500 }}>{c.name} (AAAID)</span>
+            </Tooltip>
+          </CircleMarker>
+        ))}
 
         {/* Trade route arcs */}
         {visibleLayers.routes &&
